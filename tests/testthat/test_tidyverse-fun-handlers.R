@@ -9,7 +9,7 @@ test_time <- tibble::tibble(
 )
 
 test_tbl_time <- as_tbl_time(test_time, date)
-grouped_test  <- group_by(test_tbl_time, group)
+grouped_test  <- dplyr::group_by(test_tbl_time, group)
 
 time_classes <- stringr::str_subset(class(test_tbl_time), "tbl_time")
 time_attrs <- list(
@@ -62,3 +62,7 @@ test_that("retime adds time based attributes/classes back with groups", {
   expect_match(names(attributes(retime_tbl_time)), "time_zone", all = FALSE)
 })
 
+test_that("Error with non tbl_time object", {
+  expect_error(tidyverse_execute(test_time, mutate, x_new=2),
+               "Object is not of class `tbl_time`.")
+})

@@ -12,10 +12,11 @@ time_filter(x, time_formula)
 \arguments{
 \item{x}{A \code{tbl_time} object.}
 
-\item{time_formula}{A period to filter over. This is specified as a \code{formula}.}
+\item{time_formula}{A period to filter over.
+This is specified as a \code{formula}. See \code{Details}.}
 
 \item{i}{A period to filter over. This is specified the same as
-\code{time_formula} but this follows the normal extraction argument syntax.}
+\code{time_formula} or can use the traditional row extraction method.}
 
 \item{j}{Optional argument to also specify column index to subset. Works
 exactly like the normal extraction operator.}
@@ -23,8 +24,7 @@ exactly like the normal extraction operator.}
 \item{drop}{Will always be coerced to \code{FALSE} by \code{tibble}.}
 }
 \description{
-Use a concise filtering method to filter for rows where the \code{index}
-falls within a date range
+Use a concise filtering method to filter a \code{tbl_time} object by it's \code{index}.
 }
 \details{
 The \code{time_formula} is specified using the format \code{from ~ to}.
@@ -64,7 +64,7 @@ This function respects \code{\link[dplyr:group_by]{dplyr::group_by()}} groups.
 # FANG contains Facebook, Amazon, Netflix and Google stock prices
 data(FANG)
 FANG <- as_tbl_time(FANG, date) \%>\%
-  group_by(symbol)
+  dplyr::group_by(symbol)
 
 # 2013-01-01 to 2014-12-31
 time_filter(FANG, 2013 ~ 2014)

@@ -1,7 +1,10 @@
 #' Succinctly filter a `tbl_time` object by date
 #'
-#' Use a concise filtering method to filter for rows where the `index`
-#' falls within a date range
+#' Use a concise filtering method to filter a `tbl_time` object by it's `index`.
+#'
+#' @param x A `tbl_time` object.
+#' @param time_formula A period to filter over.
+#' This is specified as a `formula`. See `Details`.
 #'
 #' @details
 #'
@@ -29,8 +32,6 @@
 #'
 #' This function respects [dplyr::group_by()] groups.
 #'
-#' @param x A `tbl_time` object.
-#' @param time_formula A period to filter over. This is specified as a `formula`.
 #'
 #' @rdname time_filter
 #'
@@ -41,7 +42,7 @@
 #' # FANG contains Facebook, Amazon, Netflix and Google stock prices
 #' data(FANG)
 #' FANG <- as_tbl_time(FANG, date) %>%
-#'   group_by(symbol)
+#'   dplyr::group_by(symbol)
 #'
 #' # 2013-01-01 to 2014-12-31
 #' time_filter(FANG, 2013 ~ 2014)
@@ -76,6 +77,8 @@ time_filter.tbl_time <- function(x, time_formula) {
 
   # Index name as sym
   index_name <- rlang::sym(retrieve_index(x, as_name = TRUE))
+  index_raw      <- retrieve_index(x) %>%
+    dplyr::pull()
 
   # Normalize
   from_to_clean <- purrr::map2_chr(.x = from_to,
@@ -85,11 +88,14 @@ time_filter.tbl_time <- function(x, time_formula) {
   # Validate time_formula date order
   validate_date_order(from = from_to_clean[1], to = from_to_clean[2])
 
+  # Date function selection
+  date_fun <- date_fun_selector(x)
+
   # Filter for those rows
   dplyr::filter(x,
-                rlang::UQ(index_name) >= as.POSIXct(from_to_clean[1],
+                rlang::UQ(index_name) >= date_fun(from_to_clean[1],
                                                     tz = retrieve_time_zone(x)),
-                rlang::UQ(index_name) <= as.POSIXct(from_to_clean[2],
+                rlang::UQ(index_name) <= date_fun(from_to_clean[2],
                                                     tz = retrieve_time_zone(x)))
 
 }
@@ -99,7 +105,7 @@ time_filter.tbl_time <- function(x, time_formula) {
 #' @export
 #'
 #' @param i A period to filter over. This is specified the same as
-#' `time_formula` but this follows the normal extraction argument syntax.
+#' `time_formula` or can use the traditional row extraction method.
 #' @param j Optional argument to also specify column index to subset. Works
 #' exactly like the normal extraction operator.
 #' @param drop Will always be coerced to `FALSE` by `tibble`.
@@ -108,30 +114,49 @@ time_filter.tbl_time <- function(x, time_formula) {
 #'
 `[.tbl_time` <- function(x, i, j, drop = FALSE) {
 
-  # If i exists
-  if(!rlang::is_missing(i)) {
+  # Classes and attributes to keep
+  time_classes <- stringr::str_subset(class(x), "tbl_time")
+  time_attrs <- list(
+    index     = attr(x, "index"),
+    time_zone = attr(x, "time_zone")
+  )
 
-    # And i is a formula
+  # This helps decide whether i is used for column subset or row subset
+  .nargs <- nargs() - !missing(drop)
+
+  # time_filter if required
+  if(!missing(i)) {
     if(rlang::is_formula(i)) {
-
-      # time_filter first
       x <- time_filter(x, i)
+    }
+  }
 
-      # Then j filter if requested, keeping class
-      if(!rlang::is_missing(j)) {
-        x <- tidyverse_execute(x, `[`, j = j, drop = drop)
+  # detime
+  x <- detime(x, time_classes, time_attrs)
+
+  # i filter
+  if(!missing(i)) {
+    if(!rlang::is_formula(i)) {
+      if(.nargs <= 2) {
+        # Column subset
+        # Preferred if tibble issue is addressed
+        # x <- x[i, drop = drop]
+        x <- x[i]
+      } else {
+        # Row subset
+        x <- x[i, , drop = drop]
       }
 
-      # Then return x
-      x
-
-    # If i was missing, or is not a formula, execute and keep attrs/class
-    } else {
-      tidyverse_execute(x, `[`, i = i, j = j, drop = drop)
     }
-  } else {
-    tidyverse_execute(x, `[`, i = i, j = j, drop = drop)
   }
+
+  # j filter
+  if(!missing(j)) {
+    x <- x[, j, drop = drop]
+  }
+
+  # retime
+  retime(x, time_classes, time_attrs)
 }
 
 
@@ -181,7 +206,8 @@ validate_date_order <- function(from, to) {
   from <- as.POSIXct(from)
   to   <- as.POSIXct(to)
 
-  assertthat::assert_that(from <= to, msg = "`from` must be a date before `to`")
+  assertthat::assert_that(from <= to,
+                          msg = "`from` must be a date before `to`")
 }
 
 # Expand date shorthand into a real date
@@ -212,9 +238,14 @@ normalize_date <- function(x, from_to) {
   } else {
 
     # If there is only a date, no time
-    # Recurse split the date, and pass 0 as time
+    # Recurse split the date, and pass default time
     date <- recurse_split(x, ymd, "-")
-    time <- recurse_split("00:00:00", hms, ":")
+
+    if(from_to == "from") {
+      time <- "00:00:00"
+    } else {
+      time <- "23:59:59"
+    }
 
     # Paste together
     paste(date, time, sep = " ")
@@ -234,9 +265,9 @@ recurse_split <- function(x, filler, splitter) {
     piece <- stringr::str_extract(x, paste0("([^", splitter, "]+)"))
 
     # Replace the first part with "" in the string
-    x <- stringr::str_replace(x,
-                              pattern = paste0("([^", splitter, "]+", splitter, ")"),
-                              replacement = "")
+    x <- sub(x = x,
+             pattern = paste0("([^", splitter, "]+", splitter, ")"),
+             replacement = "")
 
     # Add the new piece to the filler
     filler[[i]] <- piece
@@ -261,4 +292,18 @@ recurse_split <- function(x, filler, splitter) {
   }
 
   paste0(unlist(filler), collapse = splitter)
+}
+
+# Set date conversion function
+date_fun_selector <- function(x) {
+
+  index_raw <- retrieve_index(x) %>%
+    dplyr::pull()
+
+  # Switch based on class of the index
+  if(inherits(index_raw, "Date")) {
+    as.Date
+  } else if(inherits(index_raw, "POSIXct")) {
+    as.POSIXct
+  }
 }

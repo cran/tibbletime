@@ -3,7 +3,7 @@
 tibbletime
 ==========
 
-[![Travis-CI Build Status](https://travis-ci.org/business-science/tibbletime.svg?branch=master)](https://travis-ci.org/business-science/tibbletime.svg?branch=master) [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/tibbletime)](https://cran.r-project.org/package=tibbletime)
+[![Travis-CI Build Status](https://travis-ci.org/business-science/tibbletime.svg?branch=master)](https://travis-ci.org/business-science/tibbletime.svg?branch=master) [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/tibbletime)](https://cran.r-project.org/package=tibbletime) [![codecov](https://codecov.io/gh/business-science/tibbletime/branch/master/graph/badge.svg)](https://codecov.io/gh/business-science/tibbletime)
 
 A time aware tibble
 -------------------
@@ -12,15 +12,19 @@ Built on top of the `tidyverse`, `tibbletime` is an extension that allows for th
 
 Some immediate advantages of this include:
 
-1.  The ability to perform compact time based subsetting on tibbles.
+1.  The ability to perform compact time-based subsetting on tibbles.
 
-2.  Quickly summarising and aggregating results by time period (yearly, monthly, etc).
+2.  Quickly summarising and aggregating results by time period (yearly, monthly, every 2 weeks, etc).
 
-3.  Changing the periodicity of a time based tibble. This means changing from a daily dataset to a monthly or yearly dataset.
+3.  Changing the periodicity of a time-based tibble. This means changing from a daily dataset to a monthly or yearly dataset.
 
-4.  Calling functions similar in spirit to the `map` family from `purrr` on time based tibbles.
+4.  Calling functions similar in spirit to the `purrr::map()` family on time-based tibbles.
 
-5.  All functions were designed to support the pipe and to work with packages like `dplyr` and `tidyr`.
+5.  All functions were designed to support the pipe and to work with packages like `dplyr` and `tidyr`. Each function has also been designed to work with `dplyr::group_by()` allowing for powerful data manipulation.
+
+6.  Modifying functions for rolling analysis.
+
+7.  Quickly creating `tbl_time` time series objects.
 
 Installation
 ------------
@@ -45,6 +49,7 @@ The first thing to do is to turn your `tibble` into a `tbl_time` object. Notice 
 
 ``` r
 library(tibbletime)
+library(dplyr)
 
 # Facebook stock prices. Comes with the package
 data(FB)
@@ -72,15 +77,19 @@ FB
 
 There are a number of functions that were designed specifically for `tbl_time` objects. Some of them are:
 
-1.  `time_filter` - Succinctly filter a tbl\_time object by date.
+1.  `time_filter()` - Succinctly filter a tbl\_time object by date.
 
-2.  `time_summarise` - Similar to dplyr::summarise but with the added benefit of being able to summarise by a time period such as "yearly" or "monthly".
+2.  `time_summarise()` - Similar to dplyr::summarise but with the added benefit of being able to summarise by a time period such as "yearly" or "monthly".
 
-3.  `tmap` - The family of tmap functions transform a tbl\_time input by applying a function to each column at a specified time interval.
+3.  `tmap()` - The family of tmap functions transform a tbl\_time input by applying a function to each column at a specified time interval.
 
-4.  `as_period` - Convert a tbl\_time object from daily to monthly, from minute data to hourly, and more. This allows the user to easily aggregate data to a less granular level.
+4.  `as_period()` - Convert a tbl\_time object from daily to monthly, from minute data to hourly, and more. This allows the user to easily aggregate data to a less granular level.
 
-5.  `time_collapse` - When time\_collapse is used, the index of a tbl\_time object is altered so that all dates that fall in a period share a common date.
+5.  `time_collapse()` - When time\_collapse is used, the index of a tbl\_time object is altered so that all dates that fall in a period share a common date.
+
+6.  `rollify()` - Modify a function so that it calculates a value (or a set of values) at specific time intervals. This can be used for rolling averages and other rolling calculations inside the `tidyverse` framework.
+
+7.  `create_series()` - Use shorthand notation to quickly initialize a `tbl_time` object containing a `date` column with a regularly spaced time series.
 
 To look at just a few:
 
@@ -125,7 +134,7 @@ FB %>%
 
 # Get the average mean and standard deviation for each year
 FB %>%
-  time_summarise(period = "yearly",
+  time_summarise(period = 1~y,
         adj_mean = mean(adjusted),
         adj_sd   = sd(adjusted))
 #> # A time tibble: 4 x 3
@@ -136,6 +145,45 @@ FB %>%
 #> 2 2014-12-31  68.76234  7.502259
 #> 3 2015-12-31  88.77286 10.211442
 #> 4 2016-12-30 117.03587  8.899858
+
+# Perform a 5 period rolling average
+mean_5 <- rollify(mean, window = 5)
+FB %>%
+  mutate(roll_mean = mean_5(adjusted))
+#> # A time tibble: 1,008 x 9
+#> # Index: date
+#>    symbol       date  open  high   low close    volume adjusted roll_mean
+#>  *  <chr>     <date> <dbl> <dbl> <dbl> <dbl>     <dbl>    <dbl>     <dbl>
+#>  1     FB 2013-01-02 27.44 28.18 27.42 28.00  69846400    28.00        NA
+#>  2     FB 2013-01-03 27.88 28.47 27.59 27.77  63140600    27.77        NA
+#>  3     FB 2013-01-04 28.01 28.93 27.83 28.76  72715400    28.76        NA
+#>  4     FB 2013-01-07 28.69 29.79 28.65 29.42  83781800    29.42        NA
+#>  5     FB 2013-01-08 29.51 29.60 28.86 29.06  45871300    29.06    28.602
+#>  6     FB 2013-01-09 29.67 30.60 29.49 30.59 104787700    30.59    29.120
+#>  7     FB 2013-01-10 30.60 31.45 30.28 31.30  95316400    31.30    29.826
+#>  8     FB 2013-01-11 31.28 31.96 31.10 31.72  89598000    31.72    30.418
+#>  9     FB 2013-01-14 32.08 32.21 30.62 30.95  98892800    30.95    30.724
+#> 10     FB 2013-01-15 30.64 31.71 29.88 30.10 173242600    30.10    30.932
+#> # ... with 998 more rows
+
+# Create a time series
+# Every other day in 2013
+create_series(~2013, 2~d)
+#> # A time tibble: 183 x 1
+#> # Index: date
+#>          date
+#>        <date>
+#>  1 2013-01-01
+#>  2 2013-01-03
+#>  3 2013-01-05
+#>  4 2013-01-07
+#>  5 2013-01-09
+#>  6 2013-01-11
+#>  7 2013-01-13
+#>  8 2013-01-15
+#>  9 2013-01-17
+#> 10 2013-01-19
+#> # ... with 173 more rows
 ```
 
 Grouping
@@ -178,9 +226,20 @@ FANG %>%
 #> 16   NFLX 2016-12-30  82.79000 128.35001  45.56001
 ```
 
+Vignettes
+---------
+
+There are currently 4 vignettes for `tibbletime`.
+
+1.  [Introduction to tibbletime](https://business-science.github.io/tibbletime/articles/TT-00-intro-to-tibbletime.html)
+
+2.  [Time-based filtering](https://business-science.github.io/tibbletime/articles/TT-01-time-based-filtering.html)
+
+3.  [Changing periodicity](https://business-science.github.io/tibbletime/articles/TT-02-changing-time-periods.html)
+
+4.  [Rolling calculations](https://business-science.github.io/tibbletime/articles/TT-03-rollify-for-rolling-analysis.html)
+
 Warning
 -------
 
-This package is still going through active development and is subject to change. Use at your own risk. Reproducible bug reports are welcome.
-
-Vignettes and more functionality are coming soon. Stay tuned.
+This package is still going through active development and is subject to change. Use at your own risk. Reproducible bug reports and suggestions for new features are welcome!
