@@ -1,10 +1,6 @@
-## ---- echo = FALSE, message = FALSE, warning = FALSE---------------------
-library(tibbletime)
-library(dplyr)
-library(tidyr)
-
 ## ---- message=FALSE, warning=FALSE---------------------------------------
 library(tibbletime)
+library(dplyr)
 
 # Facebook stock prices.
 data(FB)
@@ -21,31 +17,31 @@ FANG <- as_tbl_time(FANG, index = date) %>%
 
 
 ## ------------------------------------------------------------------------
-as_period(FB, 1~month)
+as_period(FB, '1 month')
 
 # Additionally, the following are equivalent
-# as_period(FB, 1~m)
-# as_period(FB, "monthly")
-# as_period(FB, "m")
+# as_period(FB, 'monthly')
+# as_period(FB, 'm')
+# as_period(FB, '1 m')
 
 ## ------------------------------------------------------------------------
-as_period(FB, 2~m)
+as_period(FB, '2 m')
 
 ## ------------------------------------------------------------------------
-as_period(FB, 25~d)
+as_period(FB, '25 d')
 
 ## ------------------------------------------------------------------------
 # Without start_date
-as_period(FB, 2~d)
+as_period(FB, '2 d')
 
 ## ------------------------------------------------------------------------
 # With start_date
-as_period(FB, 2~d, start_date = "2013-01-01")
+as_period(FB, '2 d', start_date = "2013-01-01")
 
 ## ------------------------------------------------------------------------
-as_period(FB, 1~y, side = "end")
+as_period(FB, 'y', side = "end")
 
 ## ------------------------------------------------------------------------
 FANG %>%
-  as_period(2~y)
+  as_period('2 y')
 
