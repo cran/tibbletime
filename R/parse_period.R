@@ -48,7 +48,11 @@ parse_period.character <- function(period) {
 
   period_char <- parse_period_char(period_char)
 
-  list(freq = period_freq, period = period_char)
+  period_list <- list(freq = period_freq, period = period_char)
+
+  period_list <- check_subsecond_period(period_list)
+
+  period_list
 }
 
 
@@ -69,42 +73,37 @@ parse_period_char <- function(period) {
 # >1 letter character parsing
 parse_word_period <- function(period) {
 
-  partial_detect <- function(period, detect_pattern) {
-    # Partial match the detect_pattern in the period.
-    # Coerce to logical TRUE/FALSE for existance.
-    as.logical(pmatch(detect_pattern, period, nomatch = FALSE))
-  }
+  key <- c("year", "quarter", "month", "week",
+           "da",   "hour",    "min",   "sec",
+           "ms",   "mil",     "us",    "mic")
 
-  p <- dplyr::case_when(
-    partial_detect(period, "year")    ~ "year",
-    partial_detect(period, "quarter") ~ "quarter",
-    partial_detect(period, "month")   ~ "month",
-    partial_detect(period, "week")    ~ "week",
-    partial_detect(period, "da")      ~ "day",
-    partial_detect(period, "hour")    ~ "hour",
-    partial_detect(period, "min")     ~ "min",
-    partial_detect(period, "sec")     ~ "sec",
-   TRUE                               ~ "NULL"
-  )
+  value <- c("year",     "quarter",  "month",    "week",
+             "day",      "hour",     "min",      "sec",
+             "millisec", "millisec", "microsec", "microsec")
 
-  if(p == "NULL") {
+  loc_vec <- pmatch(key, period)
+  parsed_period <- value[!is.na(loc_vec)]
+
+  if(length(parsed_period) == 0) {
     glue_stop("Period '{period}' specified incorrectly.")
   }
 
-  p
+  parsed_period
 }
 
 # 1 letter parsing, case sensitive
 parse_letter_period <- function(period) {
   switch (period,
-          "y" = "year",    "Y" = "year",
-          "q" = "quarter", "Q" = "quarter",
-          "m" = "month",    # Case sensitive
-          "w" = "week",    "W" = "week",
-          "d" = "day",     "D" = "day",
-          "h" = "hour",    "H" = "hour",
-          "M" = "min",      # Case sensitive
-          "s" = "sec",     "S" = "sec",
+          "y" = "year",     "Y" = "year",
+          "q" = "quarter",  "Q" = "quarter",
+          "m" = "month",     # Case sensitive
+          "w" = "week",     "W" = "week",
+          "d" = "day",      "D" = "day",
+          "h" = "hour",     "H" = "hour",
+          "M" = "min",       # Case sensitive
+          "s" = "sec",      "S" = "sec",
+          "l" = "millisec", "L" = "millisec",
+          "u" = "microsec", "U" = "microsec",
           glue_stop("Period '{period}' specified incorrectly.")
   )
 }
@@ -116,4 +115,21 @@ assert_freq_coerce_to_numeric <- function(freq) {
     suppressWarnings(!is.na(as.numeric(freq))),
     msg = "Frequency must be coercible to numeric."
   )
+}
+
+# If subsecond resolution, change to correct second representation
+check_subsecond_period <- function(period_list) {
+
+  multiplier <- switch(period_list$period,
+         "millisec" = 1000,
+         "microsec" = 1000000,
+         0 # Default for >subsecond periods so it returns
+  )
+
+  if(!multiplier) return(period_list)
+
+  period_list$freq   <- period_list$freq / multiplier
+  period_list$period <- "sec"
+
+  period_list
 }

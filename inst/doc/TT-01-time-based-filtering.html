@@ -12,7 +12,7 @@
 
 <meta name="author" content="Davis Vaughan" />
 
-<meta name="date" content="2018-01-02" />
+<meta name="date" content="2018-01-30" />
 
 <title>Time-based filtering</title>
 
@@ -70,7 +70,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">Time-based filtering</h1>
 <h4 class="author"><em>Davis Vaughan</em></h4>
-<h4 class="date"><em>2018-01-02</em></h4>
+<h4 class="date"><em>2018-01-30</em></h4>
 
 
 <div id="TOC">
@@ -236,7 +236,7 @@ FANG &lt;-<span class="st"> </span><span class="kw">as_tbl_time</span>(FANG, <sp
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">FANG <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">filter_time</span>(<span class="st">'2013-01-01'</span> <span class="op">~</span><span class="st"> '2013-01-04'</span>)</code></pre></div>
 <pre><code>## # A time tibble: 12 x 8
-## # Index: date
+## # Index:  date
 ## # Groups: symbol [4]
 ##    symbol date        open  high   low close   volume adjusted
 ##    &lt;chr&gt;  &lt;date&gt;     &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;

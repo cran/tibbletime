@@ -21,10 +21,13 @@ Note that you can pass the specification in a flexible way:
 }
 
 This shorthand is available for year, quarter, month, day, hour, minute,
-and second periodicities. Note that "m" is the 1 letter specification used
-for "month" and "M" is used for "minute". Otherwise case does not matter.}
+second, millisecond and microsecond periodicities.
 
-\item{start_date}{Optional argument used to specify the start date for the
+Additionally, you have the option of passing in a vector of dates to
+use as custom and more flexible boundaries.}
+
+\item{start_date}{Optional argument used to
+specify the start date for the
 first group. The default is to start at the closest period boundary
 below the minimum date in the supplied index.}
 
@@ -45,8 +48,6 @@ the beginning or end of the period.
 }
 \details{
 This function respects \code{\link[dplyr:group_by]{dplyr::group_by()}} groups.
-
-Currently periods finer than second data are not supported.
 
 The \code{side} argument is useful when you want to return data at, say, the
 end of a quarter, or the end of a month.
@@ -105,6 +106,9 @@ as_period(FANG, "6 months")
 
 # Using start_date ----------------------------------------------------------
 
+
+#### One method using start_date
+
 # FB stock prices
 data(FB)
 FB <- as_tbl_time(FB, date)
@@ -117,6 +121,22 @@ as_period(FB, "2 day")
 # Specifying the `start_date = "2013-01-01"` might be preferable.
 # Groups become (2013-01-01, 2013-01-02), (2013-01-03, 2013-01-04) and so on.
 as_period(FB, "2 day", start_date = "2013-01-01")
+
+#### Equivalent method using an index vector
+
+# FB stock prices
+data(FB)
+FB <- as_tbl_time(FB, date)
+
+custom_period <- create_series(
+  time_formula = dplyr::first(FB$date) - 1 ~ dplyr::last(FB$date),
+  period       = "2 day",
+  class        = "Date",
+  as_vector    = TRUE)
+
+FB \%>\%
+  as_tbl_time(date) \%>\%
+  as_period(period = custom_period)
 
 # Manually calculating returns at different periods -------------------------
 

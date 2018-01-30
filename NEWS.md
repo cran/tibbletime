@@ -1,3 +1,36 @@
+## tibbletime 0.1.1
+
+* General
+
+    * `collapse_index()` and `collapse_by()` support a `clean` argument. This
+    will round your index up/down to the next period boundary, allowing for
+    prettier dates that can be used in summaries.
+
+    * A new helper function, `collapse_by()`, wraps the common idiom of 
+    `.tbl_time %>% mutate(date = collapse_index(date, "yearly"))` and is the
+    easiest way to use `tibbletime` with the rest of the tidyverse.
+
+    * You can now pass an index vector (easily created with `create_series()`) to
+    the `period` argument of functions like `as_period()` or `collapse_by()`
+    to specify custom periods to collapse at.
+
+    * Added support for `millisecond` and `microsecond` grouping. 
+    See `?create_series` for examples and `?filter_time` Details 
+    for more information.
+    
+    * `partition_index()` (and therefore higher level functions like
+    `collapse_by()`) now round using the entire `period` argument to figure
+    out the default start date. Meaning if `2 years` is passed, it will round
+    down the start of the series to the lower `2 year` boundary, rather than
+    just `year`. This is a small change, but is technically breaking.
+    
+    * More efficient parsing of periods. Only noticably faster
+    with a large number of groups.
+    
+* Bug Fixes
+
+    * `tidyr::gather()` and `tidyr::spread()` now work appropriately.
+
 ## tibbletime 0.1.0
 
 This is a major update. It introduces a huge number of breaking changes as

@@ -12,7 +12,7 @@
 
 <meta name="author" content="Davis Vaughan" />
 
-<meta name="date" content="2018-01-02" />
+<meta name="date" content="2018-01-30" />
 
 <title>Use with dplyr</title>
 
@@ -70,7 +70,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">Use with dplyr</h1>
 <h4 class="author"><em>Davis Vaughan</em></h4>
-<h4 class="date"><em>2018-01-02</em></h4>
+<h4 class="date"><em>2018-01-30</em></h4>
 
 
 <div id="TOC">
@@ -94,18 +94,18 @@ series &lt;-<span class="st"> </span><span class="kw">create_series</span>(<span
 series</code></pre></div>
 <pre><code>## # A time tibble: 1,826 x 2
 ## # Index: date
-##    date          var
-##    &lt;date&gt;      &lt;dbl&gt;
-##  1 2013-01-01  1.29 
-##  2 2013-01-02 -0.452
-##  3 2013-01-03  0.839
-##  4 2013-01-04 -1.67 
-##  5 2013-01-05 -0.545
-##  6 2013-01-06  1.26 
-##  7 2013-01-07 -0.940
-##  8 2013-01-08 -0.623
-##  9 2013-01-09  0.378
-## 10 2013-01-10 -0.108
+##    date           var
+##    &lt;date&gt;       &lt;dbl&gt;
+##  1 2013-01-01 -0.0243
+##  2 2013-01-02 -0.917 
+##  3 2013-01-03  1.46  
+##  4 2013-01-04 -0.303 
+##  5 2013-01-05 -1.07  
+##  6 2013-01-06 -0.827 
+##  7 2013-01-07 -0.655 
+##  8 2013-01-08 -0.316 
+##  9 2013-01-09  1.22  
+## 10 2013-01-10 -1.33  
 ## # ... with 1,816 more rows</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">series <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">mutate</span>(<span class="dt">year =</span> <span class="kw">year</span>(date), <span class="dt">month =</span> <span class="kw">month</span>(date)) <span class="op">%&gt;%</span>
@@ -114,70 +114,70 @@ series</code></pre></div>
 <pre><code>## # A tibble: 60 x 3
 ##     year month mean_var
 ##    &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;
-##  1  2013  1.00  -0.177 
-##  2  2013  2.00  -0.191 
-##  3  2013  3.00   0.0413
-##  4  2013  4.00   0.0756
-##  5  2013  5.00   0.156 
-##  6  2013  6.00  -0.351 
-##  7  2013  7.00  -0.126 
-##  8  2013  8.00   0.230 
-##  9  2013  9.00  -0.0997
-## 10  2013 10.0    0.188 
+##  1  2013  1.00  -0.266 
+##  2  2013  2.00  -0.0204
+##  3  2013  3.00   0.181 
+##  4  2013  4.00  -0.0841
+##  5  2013  5.00   0.606 
+##  6  2013  6.00  -0.221 
+##  7  2013  7.00  -0.183 
+##  8  2013  8.00   0.126 
+##  9  2013  9.00  -0.318 
+## 10  2013 10.0   -0.376 
 ## # ... with 50 more rows</code></pre>
 <p>This get’s more difficult the more granular you go. Getting 5-minute summaries from minute or second data requires grouping on year, month, day, hour and minute columns.</p>
 </div>
 <div id="index-manipulation" class="section level2">
 <h2>Index manipulation</h2>
-<p>With <code>tibbletime</code>, rather than creating new columns to group on, you manipulate your original date column into something that corresponds to the period you are summarising at. The <code>tibbletime</code> way to do this is with <code>collapse_index()</code>.</p>
+<p>With <code>tibbletime</code>, rather than creating new columns to group on, you manipulate your original date column into something that corresponds to the period you are summarising at. The <code>tibbletime</code> way to do this is with <code>collapse_by()</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">series <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">date =</span> <span class="kw">collapse_index</span>(date, <span class="st">&quot;monthly&quot;</span>)) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">collapse_by</span>(<span class="st">&quot;monthly&quot;</span>) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">group_by</span>(date) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">summarise</span>(<span class="dt">mean_var =</span> <span class="kw">mean</span>(var))</code></pre></div>
 <pre><code>## # A time tibble: 60 x 2
 ## # Index: date
 ##    date       mean_var
 ##    &lt;date&gt;        &lt;dbl&gt;
-##  1 2013-01-31  -0.177 
-##  2 2013-02-28  -0.191 
-##  3 2013-03-31   0.0413
-##  4 2013-04-30   0.0756
-##  5 2013-05-31   0.156 
-##  6 2013-06-30  -0.351 
-##  7 2013-07-31  -0.126 
-##  8 2013-08-31   0.230 
-##  9 2013-09-30  -0.0997
-## 10 2013-10-31   0.188 
+##  1 2013-01-31  -0.266 
+##  2 2013-02-28  -0.0204
+##  3 2013-03-31   0.181 
+##  4 2013-04-30  -0.0841
+##  5 2013-05-31   0.606 
+##  6 2013-06-30  -0.221 
+##  7 2013-07-31  -0.183 
+##  8 2013-08-31   0.126 
+##  9 2013-09-30  -0.318 
+## 10 2013-10-31  -0.376 
 ## # ... with 50 more rows</code></pre>
-<p>Implementing <code>collapse_index()</code> to work on just an index column rather than the entire <code>tbl_time</code> object means that you don’t have to override the original date column and can keep them as a separate column if required.</p>
+<p>While <code>collapse_by()</code> directly manipulates the index column, the lower level <code>collapse_index()</code> function can be used inside of a call to <code>mutate()</code> to modify the index column and then save it as a new column. This can be useful if you don’t want to lose the original index column.</p>
 <p>This works for more granular series too. Below we aggregate 5 second level data up to hourly. This is working with a faily sizable ~19 million row data set.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">second_series &lt;-<span class="st"> </span><span class="kw">create_series</span>(<span class="st">'2013'</span> <span class="op">~</span><span class="st"> '2015'</span>, <span class="st">'5 second'</span>)
 
 second_series <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">mutate</span>(<span class="dt">var =</span> <span class="kw">rnorm</span>(<span class="kw">nrow</span>(second_series))) <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">date =</span> <span class="kw">collapse_index</span>(date, <span class="st">&quot;hourly&quot;</span>)) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">collapse_by</span>(<span class="st">&quot;hourly&quot;</span>) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">group_by</span>(date) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">summarise</span>(<span class="dt">mean_var =</span> <span class="kw">mean</span>(var))</code></pre></div>
 <pre><code>## # A time tibble: 26,280 x 2
 ## # Index: date
 ##    date                mean_var
 ##    &lt;dttm&gt;                 &lt;dbl&gt;
-##  1 2013-01-01 00:59:55 -0.0157 
-##  2 2013-01-01 01:59:55 -0.00633
-##  3 2013-01-01 02:59:55 -0.00110
-##  4 2013-01-01 03:59:55 -0.00467
-##  5 2013-01-01 04:59:55 -0.0464 
-##  6 2013-01-01 05:59:55 -0.0100 
-##  7 2013-01-01 06:59:55 -0.0156 
-##  8 2013-01-01 07:59:55  0.0187 
-##  9 2013-01-01 08:59:55 -0.0263 
-## 10 2013-01-01 09:59:55 -0.0416 
+##  1 2013-01-01 00:59:55  0.0102 
+##  2 2013-01-01 01:59:55 -0.0132 
+##  3 2013-01-01 02:59:55  0.0907 
+##  4 2013-01-01 03:59:55  0.00358
+##  5 2013-01-01 04:59:55  0.0331 
+##  6 2013-01-01 05:59:55  0.0316 
+##  7 2013-01-01 06:59:55  0.0676 
+##  8 2013-01-01 07:59:55  0.0325 
+##  9 2013-01-01 08:59:55  0.00153
+## 10 2013-01-01 09:59:55 -0.00630
 ## # ... with 26,270 more rows</code></pre>
 </div>
 <div id="multiple-series" class="section level2">
 <h2>Multiple series</h2>
 <p>One really powerful benefit of working in the <code>tidyverse</code> is being able to manipulate multiple series at once. Essentially we can create multiple layers of groupings, one for the stocks we are working with (like Facebook and Apple), and one for the period you want to summarise your data at (daily, yearly, etc).</p>
-<p>Below we use <code>create_series()</code> to create two dummy hourly price series, combine them, and calculate the OHLC (Open, High, Low, Close) prices per day by first collapsing to daily with <code>collapse_index()</code> to have something to group on.</p>
+<p>Below we use <code>create_series()</code> to create two dummy hourly price series, combine them, and calculate the OHLC (Open, High, Low, Close) prices per day by first collapsing to daily with <code>collapse_by()</code> to have something to group on.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">set.seed</span>(<span class="dv">123</span>)
 
 <span class="co"># Create price series of hourly movements for apple and facebook stock.</span>
@@ -195,7 +195,7 @@ price_series &lt;-<span class="st"> </span><span class="kw">bind_rows</span>(<sp
 <span class="co"># Collapse to daily and transform to OHLC (Open, High, Low, Close), a </span>
 <span class="co"># common financial transformation</span>
 price_series <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">date =</span> <span class="kw">collapse_index</span>(date, <span class="st">&quot;daily&quot;</span>)) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">collapse_by</span>(<span class="st">&quot;daily&quot;</span>) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">group_by</span>(date, <span class="dt">add =</span> <span class="ot">TRUE</span>) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">summarise</span>(
     <span class="dt">open  =</span> <span class="kw">first</span>(price),
@@ -205,7 +205,7 @@ price_series <span class="op">%&gt;%</span>
   ) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">slice</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>)</code></pre></div>
 <pre><code>## # A time tibble: 10 x 6
-## # Index: date
+## # Index:  date
 ## # Groups: symbol [2]
 ##    symbol   date                 open  high   low close
 ##    &lt;chr&gt;    &lt;dttm&gt;              &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;

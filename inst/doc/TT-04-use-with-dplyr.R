@@ -15,7 +15,7 @@ series %>%
 
 ## ------------------------------------------------------------------------
 series %>%
-  mutate(date = collapse_index(date, "monthly")) %>%
+  collapse_by("monthly") %>%
   group_by(date) %>%
   summarise(mean_var = mean(var))
 
@@ -24,7 +24,7 @@ second_series <- create_series('2013' ~ '2015', '5 second')
 
 second_series %>%
   mutate(var = rnorm(nrow(second_series))) %>%
-  mutate(date = collapse_index(date, "hourly")) %>%
+  collapse_by("hourly") %>%
   group_by(date) %>%
   summarise(mean_var = mean(var))
 
@@ -46,7 +46,7 @@ price_series <- bind_rows(list(apple = apple, facebook = facebook), .id = "symbo
 # Collapse to daily and transform to OHLC (Open, High, Low, Close), a 
 # common financial transformation
 price_series %>%
-  mutate(date = collapse_index(date, "daily")) %>%
+  collapse_by("daily") %>%
   group_by(date, add = TRUE) %>%
   summarise(
     open  = first(price),

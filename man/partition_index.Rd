@@ -20,10 +20,13 @@ Note that you can pass the specification in a flexible way:
 }
 
 This shorthand is available for year, quarter, month, day, hour, minute,
-and second periodicities. Note that "m" is the 1 letter specification used
-for "month" and "M" is used for "minute". Otherwise case does not matter.}
+second, millisecond and microsecond periodicities.
 
-\item{start_date}{Optional argument used to specify the start date for the
+Additionally, you have the option of passing in a vector of dates to
+use as custom and more flexible boundaries.}
+
+\item{start_date}{Optional argument used to
+specify the start date for the
 first group. The default is to start at the closest period boundary
 below the minimum date in the supplied index.}
 
