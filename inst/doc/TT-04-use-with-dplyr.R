@@ -1,4 +1,4 @@
-## ---- warning=FALSE, message=FALSE---------------------------------------
+## ---- warning=FALSE, message=FALSE--------------------------------------------
 library(tibbletime)
 library(dplyr)
 library(lubridate)
@@ -13,13 +13,13 @@ series %>%
   group_by(year, month) %>%
   summarise(mean_var = mean(var))
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 series %>%
   collapse_by("monthly") %>%
   group_by(date) %>%
   summarise(mean_var = mean(var))
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 second_series <- create_series('2013' ~ '2015', '5 second')
 
 second_series %>%
@@ -28,7 +28,7 @@ second_series %>%
   group_by(date) %>%
   summarise(mean_var = mean(var))
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 set.seed(123)
 
 # Create price series of hourly movements for apple and facebook stock.
@@ -47,7 +47,7 @@ price_series <- bind_rows(list(apple = apple, facebook = facebook), .id = "symbo
 # common financial transformation
 price_series %>%
   collapse_by("daily") %>%
-  group_by(date, add = TRUE) %>%
+  group_by(symbol, date) %>%
   summarise(
     open  = first(price),
     high  = max(price),

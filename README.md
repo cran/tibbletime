@@ -3,12 +3,16 @@
 
 # tibbletime <img src="man/figures/tibbletime-logo.png" width="147" height="170" align="right" />
 
+<!-- badges: start -->
+
 [![Lifecycle
 Status](https://img.shields.io/badge/lifecycle-retired-orange.svg)](https://www.tidyverse.org/lifecycle/)
-![Travis-CI Build
-Status](https://travis-ci.org/business-science/tibbletime.svg?branch=master)
 [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/tibbletime)](https://cran.r-project.org/package=tibbletime)
-[![codecov](https://codecov.io/gh/business-science/tibbletime/branch/master/graph/badge.svg)](https://codecov.io/gh/business-science/tibbletime)
+[![Codecov test
+coverage](https://codecov.io/gh/business-science/tibbletime/branch/master/graph/badge.svg)](https://codecov.io/gh/business-science/tibbletime?branch=master)
+[![R build
+status](https://github.com/business-science/tibbletime/workflows/R-CMD-check/badge.svg)](https://github.com/business-science/tibbletime/actions)
+<!-- badges: end -->
 
 ## Package status
 
@@ -254,7 +258,7 @@ FANG %>%
   collapse_by("year") %>%
   
   # Additionally group by date (yearly)
-  group_by(date, add = TRUE) %>%
+  group_by(symbol, date) %>%
   
   # Perform a yearly summary for each symbol
   summarise(
@@ -262,9 +266,10 @@ FANG %>%
     adj_max   = max(adjusted),
     adj_range = adj_max - adj_min
   )
+#> `summarise()` regrouping output by 'symbol' (override with `.groups` argument)
 #> # A time tibble: 16 x 5
 #> # Index:  date
-#> # Groups: symbol [?]
+#> # Groups: symbol [4]
 #>    symbol date       adj_min adj_max adj_range
 #>    <chr>  <date>       <dbl>   <dbl>     <dbl>
 #>  1 AMZN   2013-12-31   248.    404.      156. 

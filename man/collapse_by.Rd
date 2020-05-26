@@ -4,8 +4,14 @@
 \alias{collapse_by}
 \title{Collapse a tbl_time object by its index}
 \usage{
-collapse_by(.tbl_time, period = "yearly", start_date = NULL,
-  side = "end", clean = FALSE, ...)
+collapse_by(
+  .tbl_time,
+  period = "yearly",
+  start_date = NULL,
+  side = "end",
+  clean = FALSE,
+  ...
+)
 }
 \arguments{
 \item{.tbl_time}{A \code{tbl_time} object.}
@@ -79,7 +85,7 @@ FANG <- FANG \%>\%
 # calculate monthly standard deviation for each column
 FANG \%>\%
   collapse_by("monthly") \%>\%
-  dplyr::group_by(date, add = TRUE) \%>\%
+  dplyr::group_by(symbol, date) \%>\%
   dplyr::summarise_all(sd)
 
 }

@@ -1,3 +1,8 @@
+# tibbletime 0.1.4
+
+* Minor release to stay compatible with tibble 3.0.0 and the upcoming release
+  of dplyr 1.0.0.
+
 # tibbletime 0.1.3
 
 * Features

@@ -5,8 +5,14 @@
 \title{Collapse an index vector so that all observations in an interval share the
 same date}
 \usage{
-collapse_index(index, period = "yearly", start_date = NULL,
-  side = "end", clean = FALSE, ...)
+collapse_index(
+  index,
+  period = "yearly",
+  start_date = NULL,
+  side = "end",
+  clean = FALSE,
+  ...
+)
 }
 \arguments{
 \item{index}{An index vector.}
@@ -97,7 +103,7 @@ FANG <- FANG \%>\%
 # calculate monthly standard deviation for each column
 FANG \%>\%
   dplyr::mutate(date = collapse_index(date, "monthly")) \%>\%
-  dplyr::group_by(date, add = TRUE) \%>\%
+  dplyr::group_by(symbol, date) \%>\%
   dplyr::summarise_all(sd)
 
 
