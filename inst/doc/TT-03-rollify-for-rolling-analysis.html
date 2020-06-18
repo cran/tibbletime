@@ -12,7 +12,7 @@
 
 <meta name="author" content="Davis Vaughan" />
 
-<meta name="date" content="2020-05-26" />
+<meta name="date" content="2020-06-18" />
 
 <title>Rolling calculations in tibbletime</title>
 
@@ -315,7 +315,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">Rolling calculations in tibbletime</h1>
 <h4 class="author">Davis Vaughan</h4>
-<h4 class="date">2020-05-26</h4>
+<h4 class="date">2020-06-18</h4>
 
 
 <div id="TOC">
@@ -362,8 +362,8 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ## {
 ##     roller(..., .f = .f, window = window, unlist = unlist, na_value = na_value)
 ## }
-## &lt;bytecode: 0x7fb9541643b8&gt;
-## &lt;environment: 0x7fb954165490&gt;</code></pre>
+## &lt;bytecode: 0x7fd230bbcd80&gt;
+## &lt;environment: 0x7fd230bc0638&gt;</code></pre>
 <p>We now have a rolling version of the function, <code>mean()</code>. You use it in a similar way to how you might use <code>mean()</code>.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="kw">mutate</span>(FB, <span class="dt">mean_5 =</span> <span class="kw">rolling_mean</span>(adjusted))</span></code></pre></div>
 <pre><code>## # A tibble: 1,008 x 6
@@ -519,7 +519,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ## Please use `cols = c(summary_list_col)`</code></pre>
 <pre><code>## # A tibble: 5,020 x 5
 ##    symbol date       adjusted rolled_summary_type rolled_summary_val
-##    &lt;chr&gt;  &lt;date&gt;        &lt;dbl&gt; &lt;fct&gt;                            &lt;dbl&gt;
+##    &lt;chr&gt;  &lt;date&gt;        &lt;dbl&gt; &lt;chr&gt;                            &lt;dbl&gt;
 ##  1 FB     2013-01-08     29.1 mean                            28.6  
 ##  2 FB     2013-01-08     29.1 sd                               0.700
 ##  3 FB     2013-01-08     29.1 min                             27.8  
@@ -561,7 +561,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ## Please use `cols = c(summary_list_col)`</code></pre>
 <pre><code>## # A tibble: 5,020 x 5
 ##    symbol date       adjusted rolled_summary_type rolled_summary_val
-##    &lt;chr&gt;  &lt;date&gt;        &lt;dbl&gt; &lt;fct&gt;                            &lt;dbl&gt;
+##    &lt;chr&gt;  &lt;date&gt;        &lt;dbl&gt; &lt;chr&gt;                            &lt;dbl&gt;
 ##  1 FB     2013-01-08     29.1 mean                            28.6  
 ##  2 FB     2013-01-08     29.1 sd                               0.700
 ##  3 FB     2013-01-08     29.1 min                             27.8  
@@ -585,7 +585,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ## Please use `cols = c(summary_list_col)`</code></pre>
 <pre><code>## # A tibble: 5,024 x 5
 ##    symbol date       adjusted rolled_summary_type rolled_summary_val
-##    &lt;chr&gt;  &lt;date&gt;        &lt;dbl&gt; &lt;fct&gt;                            &lt;dbl&gt;
+##    &lt;chr&gt;  &lt;date&gt;        &lt;dbl&gt; &lt;chr&gt;                            &lt;dbl&gt;
 ##  1 FB     2013-01-02     28   &lt;NA&gt;                            NA    
 ##  2 FB     2013-01-03     27.8 &lt;NA&gt;                            NA    
 ##  3 FB     2013-01-04     28.8 &lt;NA&gt;                            NA    

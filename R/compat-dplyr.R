@@ -136,7 +136,6 @@ group_by.tbl_time <- function(.data, ...) {
 
 #' @export
 #' @importFrom dplyr ungroup
-#'
 ungroup.tbl_time <- function(x, ...) {
   #reconstruct(NextMethod(), x)
   copy_.data <- new_tbl_time(x, get_index_quo(x), get_index_time_zone(x))
