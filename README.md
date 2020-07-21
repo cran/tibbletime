@@ -16,9 +16,14 @@ status](https://github.com/business-science/tibbletime/workflows/R-CMD-check/bad
 
 ## Package status
 
-`tibbletime` has been officially retired. Please use the great
-[`tsibble`](https://github.com/tidyverts/tsibble) package instead as
-that is where further development will be.
+`tibbletime` has been officially retired. We will continue to maintain
+but not be adding new functionality. Options to get new functionality:
+
+  - [**timetk**](https://business-science.github.io/timetk/index.html) -
+    Provides time series visualization, wrangling, and preprocessing
+    using `tibble` structure
+  - [**tsibble**](https://github.com/tidyverts/tsibble) - Provides
+    wrangling using `tsibble` structure
 
 ## A time aware tibble
 
@@ -266,7 +271,6 @@ FANG %>%
     adj_max   = max(adjusted),
     adj_range = adj_max - adj_min
   )
-#> `summarise()` regrouping output by 'symbol' (override with `.groups` argument)
 #> # A time tibble: 16 x 5
 #> # Index:  date
 #> # Groups: symbol [4]

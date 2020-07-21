@@ -12,7 +12,7 @@
 
 <meta name="author" content="Davis Vaughan" />
 
-<meta name="date" content="2020-06-18" />
+<meta name="date" content="2020-07-21" />
 
 <title>Rolling calculations in tibbletime</title>
 
@@ -26,6 +26,22 @@ document.addEventListener('DOMContentLoaded', function(e) {
     if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
     a = h.attributes;
     while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+<script>// Hide empty <a> tag within highlighted CodeBlock for screen reader accessibility (see https://github.com/jgm/pandoc/issues/6352#issuecomment-626106786) -->
+// v0.0.1
+// Written by JooYoung Seo (jooyoung@psu.edu) and Atsushi Yasumoto on June 1st, 2020.
+
+document.addEventListener('DOMContentLoaded', function() {
+  const codeList = document.getElementsByClassName("sourceCode");
+  for (var i = 0; i < codeList.length; i++) {
+    var linkList = codeList[i].getElementsByTagName('a');
+    for (var j = 0; j < linkList.length; j++) {
+      if (linkList[j].innerHTML === "") {
+        linkList[j].setAttribute('aria-hidden', 'true');
+      }
+    }
   }
 });
 </script>
@@ -315,7 +331,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">Rolling calculations in tibbletime</h1>
 <h4 class="author">Davis Vaughan</h4>
-<h4 class="date">2020-06-18</h4>
+<h4 class="date">2020-07-21</h4>
 
 
 <div id="TOC">
@@ -362,8 +378,8 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ## {
 ##     roller(..., .f = .f, window = window, unlist = unlist, na_value = na_value)
 ## }
-## &lt;bytecode: 0x7fd230bbcd80&gt;
-## &lt;environment: 0x7fd230bc0638&gt;</code></pre>
+## &lt;bytecode: 0x7ff47d871208&gt;
+## &lt;environment: 0x7ff47d8741c8&gt;</code></pre>
 <p>We now have a rolling version of the function, <code>mean()</code>. You use it in a similar way to how you might use <code>mean()</code>.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="kw">mutate</span>(FB, <span class="dt">mean_5 =</span> <span class="kw">rolling_mean</span>(adjusted))</span></code></pre></div>
 <pre><code>## # A tibble: 1,008 x 6
