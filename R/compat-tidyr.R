@@ -68,14 +68,24 @@ unnest.tbl_time <- function(data,
                             .preserve = "DEPRECATED") {
   check_tidyr_version()
 
-  # This is called after nesting but excluding the index in the nest
-  #reconstruct(NextMethod(), data)
+  # This is called after nesting but excluding the index in the nest.
+  # Have to recall `unnest()` because otherwise the `cols` tidyselection gets
+  # evaluated too early.
 
-  # Pre-evaluate `cols`, as NextMethod() will evaluate it before tidyr can enquo() it
-  cols <- tidyselect::vars_select(names(data), !!rlang::enquo(cols))
+  bare_data <- as.data.frame(data)
+
+  out <- tidyr::unnest(
+    data = bare_data,
+    cols = {{ cols }},
+    ...,
+    keep_empty = keep_empty,
+    ptype = ptype,
+    names_sep = names_sep,
+    names_repair = names_repair
+  )
 
   copy_.data <- new_tbl_time(data, get_index_quo(data), get_index_time_zone(data))
-  reconstruct(NextMethod(), copy_.data)
+  reconstruct(out, copy_.data)
 }
 
 unnest.tbl_df <- function(data,
@@ -90,10 +100,22 @@ unnest.tbl_df <- function(data,
                           .sep = deprecated(),
                           .preserve = deprecated()) {
   check_tidyr_version()
-  # Called after nesting a tbl_time, index is in the nest, then unnesting
 
-  # Pre-evaluate `cols`, as NextMethod() will evaluate it before tidyr can enquo() it
-  cols <- tidyselect::vars_select(names(data), !!rlang::enquo(cols))
+  # Called after nesting a tbl_time, index is in the nest, then unnesting.
+  # Have to recall `unnest()` because otherwise the `cols` tidyselection gets
+  # evaluated too early.
+
+  bare_data <- as.data.frame(data)
+
+  out <- tidyr::unnest(
+    data = bare_data,
+    cols = {{ cols }},
+    ...,
+    keep_empty = keep_empty,
+    ptype = ptype,
+    names_sep = names_sep,
+    names_repair = names_repair
+  )
 
   list_cols <- names(data)[purrr::map_lgl(data, rlang::is_list)]
 
@@ -109,7 +131,6 @@ unnest.tbl_df <- function(data,
   # Inner is tbl_time, but the outer tbl is not one. Want to maintain
   # tbl_time class
   if(contains_inner_tbl_time & !contains_outer_tbl_time) {
-
     # Grab nested columns
     nested <- dplyr::transmute(dplyr::ungroup(data), !!! rlang::syms(list_cols))
 
@@ -120,16 +141,11 @@ unnest.tbl_df <- function(data,
     which_tbl_time <- which_tbl_time[1]
     nested_time <- nested[[which_tbl_time]][[1]]
 
-    unnested_data <- NextMethod()
+    out <- reconstruct(out, nested_time)
+  }
 
-    reconstruct(unnested_data, nested_time)
-
-  } else (
-    # No special handling, pass on to unnest()
-    NextMethod()
-  )
+  out
 }
-
 
 # ------------------------------------------------------------------------------
 # gather() and spread() seem to be needed as well

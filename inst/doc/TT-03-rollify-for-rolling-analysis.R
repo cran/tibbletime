@@ -79,7 +79,7 @@ FB_summarised
 ## -----------------------------------------------------------------------------
 FB_summarised %>% 
   filter(!is.na(summary_list_col)) %>%
-  unnest()
+  unnest(cols = summary_list_col)
 
 ## -----------------------------------------------------------------------------
 rolling_summary <- rollify(~summary_df(.x), window = 5, 
@@ -90,7 +90,7 @@ FB_summarised
 
 ## -----------------------------------------------------------------------------
 FB_summarised %>% 
-  unnest()
+  unnest(cols = summary_list_col)
 
 ## -----------------------------------------------------------------------------
 rolling_summary <- rollify(~summary_df(.x), window = 5, 
@@ -99,7 +99,7 @@ rolling_summary <- rollify(~summary_df(.x), window = 5,
                                                  rolled_summary_val  = NA))
 
 FB_summarised <- mutate(FB, summary_list_col = rolling_summary(adjusted))
-FB_summarised %>% unnest()
+FB_summarised %>% unnest(cols = summary_list_col)
 
 ## -----------------------------------------------------------------------------
 # Reset FB

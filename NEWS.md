@@ -1,3 +1,13 @@
+# tibbletime 0.1.7
+
+* Fixed usage of `|` rather than `||` in the C++ code to satisfy a CRAN warning.
+
+* Fixed a tidyselection warning emitted by the `tbl_time` method for `unnest()`
+  (#100).
+  
+* Removed usage of deprecated `tibble::trunc_mat()` in favor of
+  `pillar::tbl_sum()`.
+
 # tibbletime 0.1.6
 
 * Fixed minor tidyr 1.0.0 warnings in tests using `nest()`.

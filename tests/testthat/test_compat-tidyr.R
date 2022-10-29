@@ -42,7 +42,10 @@ test_that("nest() with .key is deprecated but works", {
   expect_is(FANG_nested$stuff[[1]], "tbl_df")
 })
 
-test_that("unnest() with index goes back to tbl_time", {
+test_that("unnest() with index returns tbl_df", {
+  # This "works" because we added a special `unnest.tbl_df()` method that
+  # intercepted the unnesting. But that was a horrible idea because we don't
+  # own the tbl_df class. But we can't remove it because anomalize relies on it.
 
   FANG_unnested <- FANG_g_time %>%
     tidyr::nest(data = everything()) %>%
