@@ -12,7 +12,7 @@
 
 <meta name="author" content="Davis Vaughan" />
 
-<meta name="date" content="2022-10-28" />
+<meta name="date" content="2023-01-24" />
 
 <title>Use with dplyr</title>
 
@@ -340,7 +340,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">Use with dplyr</h1>
 <h4 class="author">Davis Vaughan</h4>
-<h4 class="date">2022-10-28</h4>
+<h4 class="date">2023-01-24</h4>
 
 
 <div id="TOC">
@@ -368,24 +368,24 @@ monthly summary from a daily dataset.</p>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>series <span class="ot">&lt;-</span> <span class="fu">create_series</span>(<span class="st">&#39;2013&#39;</span> <span class="sc">~</span> <span class="st">&#39;2017&#39;</span>, <span class="st">&#39;daily&#39;</span>, <span class="at">class =</span> <span class="st">&quot;Date&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>series <span class="ot">&lt;-</span> <span class="fu">create_series</span>(<span class="st">&#39;2013&#39;</span> <span class="sc">~</span> <span class="st">&#39;2017&#39;</span>, <span class="st">&#39;day&#39;</span>, <span class="at">class =</span> <span class="st">&quot;Date&quot;</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">var =</span> <span class="fu">rnorm</span>(<span class="fu">n</span>()))</span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>series</span></code></pre></div>
 <pre><code>## # A time tibble: 1,826 × 2
 ## # Index:         date
-##    date           var
-##    &lt;date&gt;       &lt;dbl&gt;
-##  1 2013-01-01 -1.05  
-##  2 2013-01-02 -0.224 
-##  3 2013-01-03  0.185 
-##  4 2013-01-04 -2.05  
-##  5 2013-01-05 -0.0864
-##  6 2013-01-06  0.800 
-##  7 2013-01-07 -0.478 
-##  8 2013-01-08  0.708 
-##  9 2013-01-09  0.633 
-## 10 2013-01-10  0.0296
+##    date          var
+##    &lt;date&gt;      &lt;dbl&gt;
+##  1 2013-01-01 -0.442
+##  2 2013-01-02 -0.600
+##  3 2013-01-03 -0.333
+##  4 2013-01-04  1.11 
+##  5 2013-01-05  0.971
+##  6 2013-01-06  1.33 
+##  7 2013-01-07 -0.879
+##  8 2013-01-08 -0.158
+##  9 2013-01-09 -1.05 
+## 10 2013-01-10 -2.50 
 ## # … with 1,816 more rows</code></pre>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>series <span class="sc">%&gt;%</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">year =</span> <span class="fu">year</span>(date), <span class="at">month =</span> <span class="fu">month</span>(date)) <span class="sc">%&gt;%</span></span>
@@ -394,16 +394,16 @@ monthly summary from a daily dataset.</p>
 <pre><code>## # A tibble: 60 × 3
 ##     year month mean_var
 ##    &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;
-##  1  2013     1 -0.287  
-##  2  2013     2 -0.157  
-##  3  2013     3 -0.169  
-##  4  2013     4  0.0389 
-##  5  2013     5 -0.269  
-##  6  2013     6  0.218  
-##  7  2013     7  0.0322 
-##  8  2013     8 -0.221  
-##  9  2013     9 -0.00283
-## 10  2013    10  0.0830 
+##  1  2013     1  -0.148 
+##  2  2013     2  -0.213 
+##  3  2013     3   0.461 
+##  4  2013     4  -0.0984
+##  5  2013     5   0.155 
+##  6  2013     6  -0.112 
+##  7  2013     7  -0.0698
+##  8  2013     8   0.167 
+##  9  2013     9   0.294 
+## 10  2013    10  -0.377 
 ## # … with 50 more rows</code></pre>
 <p>This gets more difficult the more granular you go. Getting 5-minute
 summaries from minute or second data requires grouping on year, month,
@@ -417,23 +417,23 @@ corresponds to the period you are summarising at. The
 <code>tibbletime</code> way to do this is with
 <code>collapse_by()</code>.</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>series <span class="sc">%&gt;%</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collapse_by</span>(<span class="st">&quot;monthly&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collapse_by</span>(<span class="st">&quot;month&quot;</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(date) <span class="sc">%&gt;%</span></span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">mean_var =</span> <span class="fu">mean</span>(var))</span></code></pre></div>
 <pre><code>## # A time tibble: 60 × 2
 ## # Index:         date
 ##    date       mean_var
 ##    &lt;date&gt;        &lt;dbl&gt;
-##  1 2013-01-31 -0.287  
-##  2 2013-02-28 -0.157  
-##  3 2013-03-31 -0.169  
-##  4 2013-04-30  0.0389 
-##  5 2013-05-31 -0.269  
-##  6 2013-06-30  0.218  
-##  7 2013-07-31  0.0322 
-##  8 2013-08-31 -0.221  
-##  9 2013-09-30 -0.00283
-## 10 2013-10-31  0.0830 
+##  1 2013-01-31  -0.148 
+##  2 2013-02-28  -0.213 
+##  3 2013-03-31   0.461 
+##  4 2013-04-30  -0.0984
+##  5 2013-05-31   0.155 
+##  6 2013-06-30  -0.112 
+##  7 2013-07-31  -0.0698
+##  8 2013-08-31   0.167 
+##  9 2013-09-30   0.294 
+## 10 2013-10-31  -0.377 
 ## # … with 50 more rows</code></pre>
 <p>While <code>collapse_by()</code> directly manipulates the index
 column, the lower level <code>collapse_index()</code> function can be
@@ -447,23 +447,23 @@ million row data set.</p>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>second_series <span class="sc">%&gt;%</span></span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">var =</span> <span class="fu">rnorm</span>(<span class="fu">n</span>())) <span class="sc">%&gt;%</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collapse_by</span>(<span class="st">&quot;hourly&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collapse_by</span>(<span class="st">&quot;hour&quot;</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(date) <span class="sc">%&gt;%</span></span>
 <span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">mean_var =</span> <span class="fu">mean</span>(var))</span></code></pre></div>
 <pre><code>## # A time tibble: 26,280 × 2
 ## # Index:         date
 ##    date                mean_var
 ##    &lt;dttm&gt;                 &lt;dbl&gt;
-##  1 2013-01-01 00:59:55  0.0137 
-##  2 2013-01-01 01:59:55  0.00275
-##  3 2013-01-01 02:59:55 -0.0249 
-##  4 2013-01-01 03:59:55  0.00352
-##  5 2013-01-01 04:59:55  0.0118 
-##  6 2013-01-01 05:59:55  0.00632
-##  7 2013-01-01 06:59:55  0.0558 
-##  8 2013-01-01 07:59:55 -0.0304 
-##  9 2013-01-01 08:59:55 -0.0116 
-## 10 2013-01-01 09:59:55 -0.0237 
+##  1 2013-01-01 00:59:55 -0.00458
+##  2 2013-01-01 01:59:55 -0.0516 
+##  3 2013-01-01 02:59:55  0.0288 
+##  4 2013-01-01 03:59:55  0.00153
+##  5 2013-01-01 04:59:55  0.0543 
+##  6 2013-01-01 05:59:55 -0.0140 
+##  7 2013-01-01 06:59:55 -0.0291 
+##  8 2013-01-01 07:59:55  0.0122 
+##  9 2013-01-01 08:59:55 -0.0251 
+## 10 2013-01-01 09:59:55  0.0255 
 ## # … with 26,270 more rows</code></pre>
 </div>
 <div id="multiple-series" class="section level2">
@@ -494,7 +494,7 @@ Close) prices per day by first collapsing to daily with
 <span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Collapse to daily and transform to OHLC (Open, High, Low, Close), a </span></span>
 <span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a><span class="co"># common financial transformation</span></span>
 <span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>price_series <span class="sc">%&gt;%</span></span>
-<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collapse_by</span>(<span class="st">&quot;daily&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collapse_by</span>(<span class="st">&quot;day&quot;</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(symbol, date) <span class="sc">%&gt;%</span></span>
 <span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
 <span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">open  =</span> <span class="fu">first</span>(price),</span>

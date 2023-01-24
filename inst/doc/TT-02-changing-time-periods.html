@@ -12,7 +12,7 @@
 
 <meta name="author" content="Davis Vaughan" />
 
-<meta name="date" content="2022-10-28" />
+<meta name="date" content="2023-01-24" />
 
 <title>Changing periodicity</title>
 
@@ -340,7 +340,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">Changing periodicity</h1>
 <h4 class="author">Davis Vaughan</h4>
-<h4 class="date">2022-10-28</h4>
+<h4 class="date">2023-01-24</h4>
 
 
 <div id="TOC">
@@ -413,7 +413,7 @@ to monthly data.</p>
 ## 10 FB     2013-10-01  50.0  51.0  49.5  50.4  98114000     50.4
 ## # … with 38 more rows</code></pre>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Additionally, the following are equivalent</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co"># as_period(FB, &#39;monthly&#39;)</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co"># as_period(FB, &#39;month&#39;)</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># as_period(FB, &#39;m&#39;)</span></span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># as_period(FB, &#39;1 m&#39;)</span></span></code></pre></div>
 </div>
@@ -468,15 +468,15 @@ as:</p>
 <li><p>Floor that date to the period that you specified.</p></li>
 </ol>
 <p>In the 1 month example above, <code>2013-01-02</code> is the first
-date in the series, and because “monthly” was chosen, the first group is
+date in the series, and because “month” was chosen, the first group is
 defined as (2013-01-01 to 2013-01-31).</p>
 <p>Occasionally this is not what you want. Consider what would happen if
 you changed the period to “every 2 days”. The first date is
-<code>2013-01-02</code>, but because “daily” is chosen, this isn’t
-floored to <code>2013-01-01</code> so the groups are (2013-01-02,
-2013-01-03), (2013-01-04, 2013-01-05) and so on. If you wanted the first
-group to be (2013-01-01, 2013-01-02), you can use the
-<code>start_date</code> argument.</p>
+<code>2013-01-02</code>, but because “day” is chosen, this isn’t floored
+to <code>2013-01-01</code> so the groups are (2013-01-02, 2013-01-03),
+(2013-01-04, 2013-01-05) and so on. If you wanted the first group to be
+(2013-01-01, 2013-01-02), you can use the <code>start_date</code>
+argument.</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Without start_date</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">as_period</span>(FB, <span class="st">&#39;2 d&#39;</span>)</span></code></pre></div>
 <pre><code>## # A time tibble: 619 × 8

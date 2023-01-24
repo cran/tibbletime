@@ -20,7 +20,7 @@ FANG <- as_tbl_time(FANG, index = date) %>%
 as_period(FB, '1 month')
 
 # Additionally, the following are equivalent
-# as_period(FB, 'monthly')
+# as_period(FB, 'month')
 # as_period(FB, 'm')
 # as_period(FB, '1 m')
 
