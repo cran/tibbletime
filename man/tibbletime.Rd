@@ -2,8 +2,8 @@
 % Please edit documentation in R/tibbletime-package.r
 \docType{package}
 \name{tibbletime}
-\alias{tibbletime}
 \alias{tibbletime-package}
+\alias{tibbletime}
 \title{tibbletime: time-aware tibbles}
 \description{
 Built on top of the 'tibble' package, 'tibbletime' is an extension
@@ -22,7 +22,7 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Davis Vaughan \email{davis@rstudio.com}
+\strong{Maintainer}: Davis Vaughan \email{davis@posit.co}
 
 Authors:
 \itemize{

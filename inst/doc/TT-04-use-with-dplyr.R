@@ -1,4 +1,4 @@
-## ---- warning=FALSE, message=FALSE--------------------------------------------
+## ----warning=FALSE, message=FALSE---------------------------------------------
 library(tibbletime)
 library(dplyr)
 library(lubridate)
